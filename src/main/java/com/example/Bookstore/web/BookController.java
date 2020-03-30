@@ -1,15 +1,14 @@
 package com.example.Bookstore.web;
+
 import com.example.Bookstore.domain.BookRepository;
 import com.example.Bookstore.domain.CategoryRepository;
-
-
-
 import com.example.Bookstore.domain.Book;
 
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,12 +25,16 @@ public class BookController {
 	@Autowired
 	private CategoryRepository crepository;
 	
-	
+	// Show all students
+    @RequestMapping(value="/login")
+    public String login() {	
+        return "login";
+    }	
 	
 	@RequestMapping(value = "/bookList", method = RequestMethod.GET)
 	public String bookList(Model model) {
 		model.addAttribute("books", repository.findAll());
-		return "booklist";
+		return "bookList";
 
 	}
 	
@@ -60,6 +63,7 @@ public class BookController {
     }    
 
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
+    @PreAuthorize("hasAuthority('USER')")
     public String deleteBook(@PathVariable("id") Long bookId, Model model) {
     	repository.deleteById(bookId);
         return "redirect:../bookList";
